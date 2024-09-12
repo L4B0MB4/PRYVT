@@ -1,9 +1,10 @@
-"'use client'"
+"'use client'";
 
-import { Bell, Home, Mail, Search, User, Users } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Bell, Home, Mail, User, Users } from "lucide-react";
+import { ModeToggle } from "./theming/themetoggle";
 
 export function SocialNetworkLayout() {
   return (
@@ -11,7 +12,9 @@ export function SocialNetworkLayout() {
       <header className="sticky top-0 z-10 bg-white border-b">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">SocialNet</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+              SocialNet
+            </h1>
             <nav className="hidden md:flex space-x-4">
               <Button variant="ghost" size="sm">
                 <Home className="h-4 w-4 mr-2" />
@@ -29,19 +32,19 @@ export function SocialNetworkLayout() {
           </div>
           <div className="flex items-center space-x-4">
             <form className="hidden md:block">
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-64"
-              />
+              <Input type="search" placeholder="Search..." className="w-64" />
             </form>
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
             <Avatar>
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@user" />
+              <AvatarImage
+                src="/placeholder.svg?height=32&width=32"
+                alt="@user"
+              />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
+            <ModeToggle></ModeToggle>
           </div>
         </div>
       </header>
@@ -64,7 +67,10 @@ export function SocialNetworkLayout() {
                 <div key={post} className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center space-x-4 mb-4">
                     <Avatar>
-                      <AvatarImage src={`/placeholder.svg?height=40&width=40&text=User${post}`} alt={`@user${post}`} />
+                      <AvatarImage
+                        src={`/placeholder.svg?height=40&width=40&text=User${post}`}
+                        alt={`@user${post}`}
+                      />
                       <AvatarFallback>U{post}</AvatarFallback>
                     </Avatar>
                     <div>
@@ -72,16 +78,25 @@ export function SocialNetworkLayout() {
                       <p className="text-sm text-gray-500">2 hours ago</p>
                     </div>
                   </div>
-                  <p className="mb-4">This is a sample post content. It can be much longer and include various types of media.</p>
+                  <p className="mb-4">
+                    This is a sample post content. It can be much longer and
+                    include various types of media.
+                  </p>
                   <img
                     src="/placeholder.svg?height=300&width=500&text=Post+Image"
                     alt="Post image"
                     className="w-full rounded-md mb-4"
                   />
                   <div className="flex space-x-4">
-                    <Button variant="ghost" size="sm">Like</Button>
-                    <Button variant="ghost" size="sm">Comment</Button>
-                    <Button variant="ghost" size="sm">Share</Button>
+                    <Button variant="ghost" size="sm">
+                      Like
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      Comment
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      Share
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -91,7 +106,10 @@ export function SocialNetworkLayout() {
                 <h2 className="text-lg font-semibold mb-4">Your Profile</h2>
                 <div className="flex items-center space-x-4 mb-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src="/placeholder.svg?height=64&width=64" alt="@user" />
+                    <AvatarImage
+                      src="/placeholder.svg?height=64&width=64"
+                      alt="@user"
+                    />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                   <div>
@@ -105,21 +123,33 @@ export function SocialNetworkLayout() {
                 </Button>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold mb-4">Suggested Connections</h2>
+                <h2 className="text-lg font-semibold mb-4">
+                  Suggested Connections
+                </h2>
                 <ul className="space-y-4">
                   {[4, 5, 6].map((user) => (
-                    <li key={user} className="flex items-center justify-between">
+                    <li
+                      key={user}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center space-x-4">
                         <Avatar>
-                          <AvatarImage src={`/placeholder.svg?height=40&width=40&text=User${user}`} alt={`@user${user}`} />
+                          <AvatarImage
+                            src={`/placeholder.svg?height=40&width=40&text=User${user}`}
+                            alt={`@user${user}`}
+                          />
                           <AvatarFallback>U{user}</AvatarFallback>
                         </Avatar>
                         <div>
                           <h3 className="font-semibold">User {user}</h3>
-                          <p className="text-sm text-gray-500">Software Engineer</p>
+                          <p className="text-sm text-gray-500">
+                            Software Engineer
+                          </p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">Connect</Button>
+                      <Button variant="outline" size="sm">
+                        Connect
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -129,5 +159,5 @@ export function SocialNetworkLayout() {
         </div>
       </main>
     </div>
-  )
+  );
 }
