@@ -22,7 +22,7 @@ func main() {
 	log.Debug().Msg("Db Connection was successful")
 	repository := store.NewEventRepository(conn)
 
-	err = repository.AddEvent(&models.Event{Name: "myevent", Version: int64(math.Pow(2, 57)) - 1, Data: []byte{1, 2, 3}})
+	err = repository.AddEvent(&models.Event{AggregateId: 12151, Name: "myevent", Version: int64(math.Pow(2, 57)) - 1, Data: []byte{1, 2, 3}})
 
 	if err != nil {
 		log.Error().Err(err).Msg("Inserting into events table")

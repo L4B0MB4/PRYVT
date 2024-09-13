@@ -41,8 +41,8 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 		return err
 	}
 	stmt, err := e.store.Prepare(`
-        INSERT INTO events (id, timestamp_0 ,timestamp_1, Name, version_0, version_1, data)
-        VALUES (?, ?,?, ?, ?, ?, ?)
+        INSERT INTO events (id, aggregateId,timestamp_0 ,timestamp_1, Name, version_0, version_1, data)
+        VALUES (?,?,?,?, ?, ?, ?, ?)
     `)
 	if err != nil {
 		log.Info().Err(err).Msg("Preparing insert statement for events table")
@@ -50,8 +50,7 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 	}
 	defer stmt.Close()
 
-	// Execute the statement with the provided values
-	_, err = stmt.Exec(event.id, t0, t1, event.Name, v0, v1, event.Data)
+	_, err = stmt.Exec(event.id, event.AggregateId, t0, t1, event.Name, v0, v1, event.Data)
 	if err != nil {
 		log.Error().Err(err).Msg("Inserting into events table")
 		return err
