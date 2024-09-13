@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math"
+	"fmt"
 	"os"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
@@ -22,9 +22,31 @@ func main() {
 	log.Debug().Msg("Db Connection was successful")
 	repository := store.NewEventRepository(conn)
 
-	err = repository.AddEvent(&models.Event{AggregateId: 12151, Name: "myevent", Version: int64(math.Pow(2, 57)) - 1, Data: []byte{1, 2, 3}})
+	err = repository.AddEvent(&models.Event{AggregateType: "myaggregate", Name: "myevent", Version: 1, Data: []byte("erstes event")})
 
 	if err != nil {
 		log.Error().Err(err).Msg("Inserting into events table")
 	}
+	err = repository.AddEvent(&models.Event{AggregateType: "myaggregate", Name: "myevent2", Version: 2, Data: []byte("zweites event")})
+
+	if err != nil {
+		log.Error().Err(err).Msg("Inserting into events table")
+	}
+	err = repository.AddEvent(&models.Event{AggregateType: "myotheraggregate", Name: "whatanevent", Version: 1, Data: []byte("whatanevent")})
+
+	if err != nil {
+		log.Error().Err(err).Msg("Inserting into events table")
+	}
+
+	ev, err := repository.GetEventsForAggregate("myaggregate")
+	if err != nil {
+		log.Error().Err(err).Msg("myaggregate")
+	}
+	fmt.Println(ev)
+
+	ev, err = repository.GetEventsForAggregate("myotheraggregate")
+	if err != nil {
+		log.Error().Err(err).Msg("myotheraggregate")
+	}
+	fmt.Println(ev)
 }
