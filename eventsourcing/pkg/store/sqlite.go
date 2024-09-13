@@ -34,7 +34,7 @@ func (d *DatabaseConnection) SetUp() {
 }
 
 func createEventTable(db *sql.DB) error {
-	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, timestamp INTEGER,Name TEXT, version_0 INTEGER,version_1 INTEGER,data BLOB,UNIQUE(version_0, version_1) ON CONFLICT FAIL)")
+	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, timestamp_0 INTEGER,timestamp_1 INTEGER,Name TEXT, version_0 INTEGER,version_1 INTEGER,data BLOB,UNIQUE(version_0, version_1) ON CONFLICT FAIL)")
 	if err != nil {
 
 		log.Info().Err(err).Msg("Preparing statement for events table")

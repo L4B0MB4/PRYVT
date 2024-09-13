@@ -1,8 +1,10 @@
 package test
 
 import (
+	"fmt"
 	"math"
 	"testing"
+	"time"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
 )
@@ -10,6 +12,8 @@ import (
 func TestVersionSplitting64Bit(t *testing.T) {
 	var b1 int64 = int64(math.Pow(2, 64)) - 1
 
+	v := time.Now().UnixMicro()
+	fmt.Print(v)
 	_, _, err := helper.SplitVersion(b1)
 	if err == nil {
 		t.Error("Should have thrown an error with 64 bit integer")
@@ -118,6 +122,46 @@ func TestVersionMergeTwoPositiveEx3(t *testing.T) {
 		t.Fail()
 	}
 	if big != 0x1FFF_FFFF_BFFF_FFFF {
+		t.Errorf("Should have been equal to %v but was %v", 0x1FFF_FFFF_BFFF_FFFF, big)
+		t.Fail()
+	}
+}
+
+func TestVersionSplitAndMergeEx1(t *testing.T) {
+
+	var b1 int64 = int64(math.Pow(2, 57)) - 1
+
+	i1, i2, err := helper.SplitVersion(b1)
+	if err != nil {
+		t.Error("Should have been handled without error")
+		t.Fail()
+	}
+	big, err := helper.MergeVersion(i1, i2)
+	if err != nil {
+		t.Error("Should have been handled without error")
+		t.Fail()
+	}
+	if big != b1 {
+		t.Errorf("Should have been equal to %v but was %v", 0x1FFF_FFFF_BFFF_FFFF, big)
+		t.Fail()
+	}
+}
+
+func TestVersionSplitAndMergeEx2(t *testing.T) {
+
+	var b1 int64 = int64(math.Pow(2, 57)) - 2
+
+	i1, i2, err := helper.SplitVersion(b1)
+	if err != nil {
+		t.Error("Should have been handled without error")
+		t.Fail()
+	}
+	big, err := helper.MergeVersion(i1, i2)
+	if err != nil {
+		t.Error("Should have been handled without error")
+		t.Fail()
+	}
+	if big != b1 {
 		t.Errorf("Should have been equal to %v but was %v", 0x1FFF_FFFF_BFFF_FFFF, big)
 		t.Fail()
 	}
