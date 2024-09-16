@@ -24,16 +24,32 @@ func NewEventRepository(db *sql.DB) *EventRepository {
 	return &EventRepository{store: db}
 }
 
-func (e *EventRepository) AddEvent(event *models.Event) error {
-	eEvent := &eventEntity{
-		Event:     *event,
-		timestamp: time.Now(),
-		id:        uuid.New(),
+func (e *EventRepository) AddEvents(events []models.Event) error {
+
+	tx, err := e.store.Begin()
+	if err != nil {
+		return err
 	}
-	return e.addEvent(eEvent)
+
+	for _, event := range events {
+
+		eEvent := &eventEntity{
+			Event:     event,
+			timestamp: time.Now(),
+			id:        uuid.New(),
+		}
+		err = e.addEvent(tx, eEvent)
+		if err != nil {
+			tx.Rollback()
+			log.Info().Err(err).Msg("ABORTED TX")
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
-func (e *EventRepository) addEvent(event *eventEntity) error {
+func (e *EventRepository) addEvent(tx *sql.Tx, event *eventEntity) error {
 	t0, t1, err := helper.SplitInt62(event.timestamp.UnixMicro())
 	if err != nil {
 		return err
@@ -44,7 +60,6 @@ func (e *EventRepository) addEvent(event *eventEntity) error {
 		return err
 	}
 
-	tx, err := e.store.Begin()
 	stmt, err := e.store.Prepare(`
         INSERT INTO events (id, aggregateId,timestamp_0 ,timestamp_1, Name, version_0, version_1, data)
         VALUES (?,?,?,?,?,?,?,?)
@@ -77,11 +92,8 @@ func (e *EventRepository) addEvent(event *eventEntity) error {
 
 	_, err = tx.Stmt(stmtAgg).Exec(event.AggregateId, v0, v1)
 	if err != nil {
-		tx.Rollback()
-		log.Info().Err(err).Msg("ABORTED TX")
 		return err
 	}
-	tx.Commit()
 
 	return nil
 }

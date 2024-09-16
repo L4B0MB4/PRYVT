@@ -42,18 +42,20 @@ func (ctrl *EventController) GetEventsForAggregate(c *gin.Context) {
 }
 
 func (ctrl *EventController) AddEventToAggregate(c *gin.Context) {
-	var event models.Event
+	var events []models.Event
 	aggregateId := c.Param("aggregateId")
 	if len(strings.TrimSpace(aggregateId)) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Path param cant be empty or null"})
 		return
 	}
-	if err := c.ShouldBindJSON(&event); err != nil {
+	if err := c.ShouldBindJSON(&events); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	event.AggregateId = aggregateId
-	err := ctrl.repo.AddEvent(&event)
+	for _, event := range events {
+		event.AggregateId = aggregateId
+	}
+	err := ctrl.repo.AddEvents(events)
 	if err != nil {
 		_, ok := err.(*customerrors.DuplicateVersionError)
 		if ok {
