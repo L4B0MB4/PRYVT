@@ -3,10 +3,12 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"strings"
 	"time"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models/customerrors"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
@@ -53,10 +55,13 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 	}
 	defer stmt.Close()
 
-	_, err = tx.Stmt(stmt).Exec(event.id, event.AggregateType, t0, t1, event.Name, v0, v1, event.Data)
+	_, err = tx.Stmt(stmt).Exec(event.id, event.AggregateId, t0, t1, event.Name, v0, v1, event.Data)
 	if err != nil {
 		tx.Rollback()
 		log.Info().Err(err).Msg("ABORTED TX")
+		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
+			return &customerrors.DuplicateVersionError{}
+		}
 		return err
 	}
 
@@ -70,7 +75,7 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 	}
 	defer stmt.Close()
 
-	_, err = tx.Stmt(stmtAgg).Exec(event.AggregateType, v0, v1)
+	_, err = tx.Stmt(stmtAgg).Exec(event.AggregateId, v0, v1)
 	if err != nil {
 		tx.Rollback()
 		log.Info().Err(err).Msg("ABORTED TX")
@@ -119,7 +124,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 
 		var v0 int32
 		var v1 int32
-		err = rows.Scan(&event.Name, &v0, &v1, &event.Data, &event.AggregateType)
+		err = rows.Scan(&event.Name, &v0, &v1, &event.Data, &event.AggregateId)
 		if err != nil {
 			log.Info().Err(err).Msg("Error scanning rows")
 			return nil, errors.New("COULD NOT RETRIEVE EVENT")

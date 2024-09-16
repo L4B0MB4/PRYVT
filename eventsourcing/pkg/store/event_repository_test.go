@@ -38,10 +38,10 @@ func TestAddEventSuccessful(t *testing.T) {
 	}
 	r := store.NewEventRepository(conn)
 	ev := &models.Event{
-		Version:       1,
-		Name:          "testevent",
-		Data:          []byte{0, 1},
-		AggregateType: "anyaggregatetype",
+		Version:     1,
+		Name:        "testevent",
+		Data:        []byte{0, 1},
+		AggregateId: "anyaggregatetype",
 	}
 	err = r.AddEvent(ev)
 	if err != nil {
@@ -58,9 +58,9 @@ func TestAddEventSuccessful(t *testing.T) {
 		t.Fail()
 	}
 
-	evs, _ := r.GetEventsForAggregate(ev.AggregateType)
+	evs, _ := r.GetEventsForAggregate(ev.AggregateId)
 	evToComp := evs[0]
-	if evToComp.AggregateType != ev.AggregateType || evToComp.Data[0] != ev.Data[0] || evToComp.Data[1] != ev.Data[1] || evToComp.Name != ev.Name || evToComp.Version != ev.Version {
+	if evToComp.AggregateId != ev.AggregateId || evToComp.Data[0] != ev.Data[0] || evToComp.Data[1] != ev.Data[1] || evToComp.Name != ev.Name || evToComp.Version != ev.Version {
 		t.Error("SOMETHING WENT WRONG DURING SERIALIZATION OR DESERIALIZATION")
 		t.Fail()
 	}
@@ -77,10 +77,10 @@ func TestAddEventDuplicate(t *testing.T) {
 	}
 	r := store.NewEventRepository(conn)
 	ev := &models.Event{
-		Version:       1,
-		Name:          "testevent",
-		Data:          []byte{0, 1},
-		AggregateType: "anyaggregatetype",
+		Version:     1,
+		Name:        "testevent",
+		Data:        []byte{0, 1},
+		AggregateId: "anyaggregatetype",
 	}
 	err = r.AddEvent(ev)
 	if err != nil {
@@ -104,10 +104,10 @@ func TestAddTwoFollowingEvents(t *testing.T) {
 	}
 	r := store.NewEventRepository(conn)
 	ev := &models.Event{
-		Version:       1,
-		Name:          "testevent",
-		Data:          []byte{0, 1},
-		AggregateType: "anyaggregatetype",
+		Version:     1,
+		Name:        "testevent",
+		Data:        []byte{0, 1},
+		AggregateId: "anyaggregatetype",
 	}
 	err = r.AddEvent(ev)
 	if err != nil {
@@ -132,17 +132,17 @@ func TestAddThreeEventsOfTwoAggregates(t *testing.T) {
 	r := store.NewEventRepository(conn)
 	oldAggType := "anyaggregatetype"
 	ev := &models.Event{
-		Version:       1,
-		Name:          "testevent",
-		Data:          []byte{0, 1},
-		AggregateType: oldAggType,
+		Version:     1,
+		Name:        "testevent",
+		Data:        []byte{0, 1},
+		AggregateId: oldAggType,
 	}
 	r.AddEvent(ev)
 	ev.Version++
 	r.AddEvent(ev)
 	ev.Version = 0
 	newAggType := "aggregatetype2"
-	ev.AggregateType = newAggType
+	ev.AggregateId = newAggType
 	r.AddEvent(ev)
 
 	i, _ := r.GetEventsForAggregate(oldAggType)
