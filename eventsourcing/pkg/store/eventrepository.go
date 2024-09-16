@@ -3,7 +3,6 @@ package store
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
@@ -86,7 +85,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 
 	// Prepare the SQL query
 	query := `
-		SELECT events.Name, events.version_0, events.version_1, events.data 
+		SELECT events.Name, events.version_0, events.version_1, events.data,events.aggregateId 
 		FROM events 
 		JOIN aggregate_state 
 			ON events.aggregateId = aggregate_state.id 
@@ -120,11 +119,17 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 
 		var v0 int32
 		var v1 int32
-		err = rows.Scan(&event.Name, &v0, &v1, &event.Data)
+		err = rows.Scan(&event.Name, &v0, &v1, &event.Data, &event.AggregateType)
 		if err != nil {
 			log.Info().Err(err).Msg("Error scanning rows")
 			return nil, errors.New("COULD NOT RETRIEVE EVENT")
 		}
+		version, err := helper.MergeInt62(v0, v1)
+		if err != nil {
+			log.Info().Err(err).Msg("Error transforming version")
+			return nil, errors.New("COULD NOT RETRIEVE EVENT")
+		}
+		event.Version = version
 
 		// Append the event to the slice
 		events = append(events, event)
@@ -134,11 +139,6 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 	if err = rows.Err(); err != nil {
 		log.Info().Err(err).Msg("Error checking row errors")
 		return nil, errors.New("COULD NOT RETRIEVE ALL EVENTS")
-	}
-
-	// Print out the events or handle them as needed
-	for _, event := range events {
-		fmt.Printf("Event Name: %s, Version: %v \n", event.Name, event.Version)
 	}
 	return events, nil
 }

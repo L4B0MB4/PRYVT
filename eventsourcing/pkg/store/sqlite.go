@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rs/zerolog/log"
@@ -13,8 +14,21 @@ type DatabaseConnection struct {
 	db          *sql.DB
 }
 
+var _DBFILE = "./eventstore.db"
+
+func GetDbFileLocation() string {
+	return _DBFILE
+}
+
+func (d *DatabaseConnection) Teardown() error {
+	if d.db != nil {
+		d.db.Close()
+	}
+	return os.Remove(_DBFILE)
+}
+
 func (d *DatabaseConnection) SetUp() {
-	db, err := sql.Open("sqlite3", "./eventstore.db")
+	db, err := sql.Open("sqlite3", _DBFILE)
 	if err != nil {
 
 		log.Info().Err(err).Msg("Opening sqlite connection")
@@ -37,6 +51,10 @@ func (d *DatabaseConnection) SetUp() {
 	}
 	d.db = db
 	d.initialized = true
+}
+
+func (d *DatabaseConnection) IsInitialized() bool {
+	return d.initialized
 }
 
 func createEventTable(db *sql.DB) error {
