@@ -33,12 +33,12 @@ func (e *EventRepository) AddEvent(event *models.Event) error {
 }
 
 func (e *EventRepository) addEvent(event *enhancedEvent) error {
-	t0, t1, err := helper.SplitVersion(event.timestamp.UnixMicro())
+	t0, t1, err := helper.SplitInt62(event.timestamp.UnixMicro())
 	if err != nil {
 		return err
 	}
 
-	v0, v1, err := helper.SplitVersion(event.Version)
+	v0, v1, err := helper.SplitInt62(event.Version)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 	_, err = tx.Stmt(stmt).Exec(event.id, event.AggregateType, t0, t1, event.Name, v0, v1, event.Data)
 	if err != nil {
 		tx.Rollback()
-		log.Warn().Err(err).Msg("ABORTED TX")
+		log.Info().Err(err).Msg("ABORTED TX")
 		return err
 	}
 
@@ -74,7 +74,7 @@ func (e *EventRepository) addEvent(event *enhancedEvent) error {
 	_, err = tx.Stmt(stmtAgg).Exec(event.AggregateType, v0, v1)
 	if err != nil {
 		tx.Rollback()
-		log.Warn().Err(err).Msg("ABORTED TX")
+		log.Info().Err(err).Msg("ABORTED TX")
 		return err
 	}
 	tx.Commit()
@@ -98,7 +98,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 
 	stmt, err := e.store.Prepare(query)
 	if err != nil {
-		log.Warn().Err(err).Msg("Error preparing statement")
+		log.Info().Err(err).Msg("Error preparing statement")
 		return nil, errors.New("COULD NOT PREPARE STATMENT FOR QUERY EVENTS")
 	}
 	defer stmt.Close()
@@ -106,7 +106,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 	// Execute the query
 	rows, err := stmt.Query(aggregateType)
 	if err != nil {
-		log.Warn().Err(err).Msg("Error running query statement")
+		log.Info().Err(err).Msg("Error running query statement")
 		return nil, errors.New("COULD NOT QUERY EVENTS")
 	}
 	defer rows.Close()
@@ -122,7 +122,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 		var v1 int32
 		err = rows.Scan(&event.Name, &v0, &v1, &event.Data)
 		if err != nil {
-			log.Warn().Err(err).Msg("Error scanning rows")
+			log.Info().Err(err).Msg("Error scanning rows")
 			return nil, errors.New("COULD NOT RETRIEVE EVENT")
 		}
 
@@ -132,7 +132,7 @@ func (e *EventRepository) GetEventsForAggregate(aggregateType string) ([]models.
 
 	// Check for any error that might have occurred during iteration
 	if err = rows.Err(); err != nil {
-		log.Warn().Err(err).Msg("Error checking row errors")
+		log.Info().Err(err).Msg("Error checking row errors")
 		return nil, errors.New("COULD NOT RETRIEVE ALL EVENTS")
 	}
 

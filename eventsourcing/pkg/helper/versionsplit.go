@@ -2,7 +2,7 @@ package helper
 
 import "errors"
 
-func SplitVersion(version int64) (int32, int32, error) {
+func SplitInt62(version int64) (int32, int32, error) {
 	if version < 0 || (version<<1) < 0 {
 		return 0, 0, errors.New("NOT SUPPORTING USAGE OF MORE THAN 62 BITS OF THE 64 INTEGER")
 	}
@@ -11,7 +11,7 @@ func SplitVersion(version int64) (int32, int32, error) {
 	return high, low, nil
 }
 
-func MergeVersion(high int32, low int32) (int64, error) {
+func MergeInt62(high int32, low int32) (int64, error) {
 	if high < 0 || low < 0 {
 		return 0, errors.New("NOT SUPPORTING USAGE OF NEGATIVE INTEGERS")
 	}

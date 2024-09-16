@@ -1,56 +1,54 @@
-package test
+package helper
 
 import (
 	"fmt"
 	"math"
 	"testing"
 	"time"
-
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
 )
 
-func TestVersionSplitting64Bit(t *testing.T) {
+func TestInt62Split64Bit(t *testing.T) {
 	var b1 int64 = int64(math.Pow(2, 64)) - 1
 
 	v := time.Now().UnixMicro()
 	fmt.Print(v)
-	_, _, err := helper.SplitVersion(b1)
+	_, _, err := SplitInt62(b1)
 	if err == nil {
 		t.Error("Should have thrown an error with 64 bit integer")
 		t.Fail()
 	}
 }
-func TestVersionSplitting63Bit(t *testing.T) {
+func TestInt62Split63Bit(t *testing.T) {
 	var b1 int64 = int64(math.Pow(2, 63)) - 1
 
-	_, _, err := helper.SplitVersion(b1)
+	_, _, err := SplitInt62(b1)
 	if err == nil {
 		t.Error("Should have thrown an error with 63 bit integer")
 		t.Fail()
 	}
 }
 
-func TestVersionSplitting62Bit(t *testing.T) {
+func TestInt62Split62Bit(t *testing.T) {
 
 	var b1 int64 = int64(math.Pow(2, 62)) - 1
 
-	_, _, err := helper.SplitVersion(b1)
+	_, _, err := SplitInt62(b1)
 	if err != nil {
 		t.Error("Should be able to handle 62 bit integer")
 		t.Fail()
 	}
 }
 
-func TestVersionSplitting(t *testing.T) {
+func TestInt62Split(t *testing.T) {
 
 	var b1 int64 = int64(math.Pow(2, 62)) - 1
 
-	i1, i2, err := helper.SplitVersion(b1)
+	i1, i2, err := SplitInt62(b1)
 	if err != nil {
 		t.Error("Should be able to handle 62 bit integer")
 		t.Fail()
 	}
-	b_created, err := helper.MergeVersion(i1, i2)
+	b_created, err := MergeInt62(i1, i2)
 
 	if err != nil {
 		t.Error("Should be able to handle two normal integers")
@@ -61,36 +59,36 @@ func TestVersionSplitting(t *testing.T) {
 		t.Fail()
 	}
 }
-func TestVersionMergeTwoNegatives(t *testing.T) {
+func TestInt62MergeTwoNegatives(t *testing.T) {
 
-	_, err := helper.MergeVersion(int32(math.Pow(2, 32)-1), int32(math.Pow(2, 32)-1))
+	_, err := MergeInt62(int32(math.Pow(2, 32)-1), int32(math.Pow(2, 32)-1))
 	if err == nil {
 		t.Error("Should have caused an error")
 		t.Fail()
 	}
 }
 
-func TestVersionMergeOneNegativeOnePositive(t *testing.T) {
+func TestInt62MergeOneNegativeOnePositive(t *testing.T) {
 
-	_, err := helper.MergeVersion(int32(math.Pow(2, 32)-1), int32(math.Pow(2, 1)))
+	_, err := MergeInt62(int32(math.Pow(2, 32)-1), int32(math.Pow(2, 1)))
 	if err == nil {
 		t.Error("Should have caused an error")
 		t.Fail()
 	}
 }
 
-func TestVersionMergeOnePositiveOneNegative(t *testing.T) {
+func TestInt62MergeOnePositiveOneNegative(t *testing.T) {
 
-	_, err := helper.MergeVersion(int32(math.Pow(2, 1)), int32(math.Pow(2, 32)-1))
+	_, err := MergeInt62(int32(math.Pow(2, 1)), int32(math.Pow(2, 32)-1))
 	if err == nil {
 		t.Error("Should have caused an error")
 		t.Fail()
 	}
 }
 
-func TestVersionMergeTwoPositive(t *testing.T) {
+func TestInt62MergeTwoPositive(t *testing.T) {
 
-	big, err := helper.MergeVersion(int32(math.Pow(2, 31)-1), int32(math.Pow(2, 31)-1))
+	big, err := MergeInt62(int32(math.Pow(2, 31)-1), int32(math.Pow(2, 31)-1))
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
@@ -101,9 +99,9 @@ func TestVersionMergeTwoPositive(t *testing.T) {
 	}
 }
 
-func TestVersionMergeTwoPositiveEx2(t *testing.T) {
+func TestInt62MergeTwoPositiveEx2(t *testing.T) {
 
-	big, err := helper.MergeVersion(int32(math.Pow(2, 30)-1), int32(math.Pow(2, 31)-1))
+	big, err := MergeInt62(int32(math.Pow(2, 30)-1), int32(math.Pow(2, 31)-1))
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
@@ -114,9 +112,9 @@ func TestVersionMergeTwoPositiveEx2(t *testing.T) {
 	}
 }
 
-func TestVersionMergeTwoPositiveEx3(t *testing.T) {
+func TestInt62MergeTwoPositiveEx3(t *testing.T) {
 
-	big, err := helper.MergeVersion(int32(math.Pow(2, 30)-1), int32(math.Pow(2, 30)-1))
+	big, err := MergeInt62(int32(math.Pow(2, 30)-1), int32(math.Pow(2, 30)-1))
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
@@ -127,16 +125,16 @@ func TestVersionMergeTwoPositiveEx3(t *testing.T) {
 	}
 }
 
-func TestVersionSplitAndMergeEx1(t *testing.T) {
+func TestInt62SplitAndMergeEx1(t *testing.T) {
 
 	var b1 int64 = int64(math.Pow(2, 57)) - 1
 
-	i1, i2, err := helper.SplitVersion(b1)
+	i1, i2, err := SplitInt62(b1)
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
 	}
-	big, err := helper.MergeVersion(i1, i2)
+	big, err := MergeInt62(i1, i2)
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
@@ -147,16 +145,16 @@ func TestVersionSplitAndMergeEx1(t *testing.T) {
 	}
 }
 
-func TestVersionSplitAndMergeEx2(t *testing.T) {
+func TestInt62SplitAndMergeEx2(t *testing.T) {
 
 	var b1 int64 = int64(math.Pow(2, 57)) - 2
 
-	i1, i2, err := helper.SplitVersion(b1)
+	i1, i2, err := SplitInt62(b1)
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
 	}
-	big, err := helper.MergeVersion(i1, i2)
+	big, err := MergeInt62(i1, i2)
 	if err != nil {
 		t.Error("Should have been handled without error")
 		t.Fail()
