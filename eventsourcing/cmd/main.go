@@ -2,9 +2,12 @@ package main
 
 import (
 	"os"
+	"time"
 
+	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/client"
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler"
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
+	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -25,7 +28,14 @@ func main() {
 	c := controller.NewEventController(repository)
 	h := httphandler.NewHttpHandler(c)
 
-	h.Start()
+	go func() {
+		h.Start()
+	}()
+	evclient, err := client.NewEventSourcingHttpClient("http://localhost:5515")
+	if err != nil {
+		panic(err)
+	}
+	evclient.AddEvents("myaggregate4444", []models.Event{{Version: 1, Name: "asdasd", Data: []byte{1, 2, 3}}})
 
 	/*
 		err = repository.AddEvent(&models.Event{AggregateType: "myaggregate", Name: "myevent", Version: 1, Data: []byte("erstes event")})
@@ -55,4 +65,5 @@ func main() {
 			log.Error().Err(err).Msg("myotheraggregate")
 		}
 		fmt.Println(ev)*/
+	time.Sleep(100000)
 }

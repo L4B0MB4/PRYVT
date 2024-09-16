@@ -32,7 +32,7 @@ func NewHttpHandler(c *controller.EventController) *HttpHandler {
 
 func (h *HttpHandler) RegisterRoutes() {
 	h.router.GET("/:aggregateId/events", h.eventController.GetEventsForAggregate)
-	h.router.POST("/:aggregateId/event", h.eventController.AddEventToAggregate)
+	h.router.POST("/:aggregateId/events", h.eventController.AddEventToAggregate)
 }
 
 func (h *HttpHandler) Start() error {

@@ -52,8 +52,8 @@ func (ctrl *EventController) AddEventToAggregate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	for _, event := range events {
-		event.AggregateId = aggregateId
+	for i := range events {
+		events[i].AggregateId = aggregateId
 	}
 	err := ctrl.repo.AddEvents(events)
 	if err != nil {
