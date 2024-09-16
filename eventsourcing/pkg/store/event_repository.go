@@ -25,7 +25,7 @@ func NewEventRepository(db *sql.DB) *EventRepository {
 }
 
 func (e *EventRepository) AddEvent(event *models.Event) error {
-	eEvent := &enhancedEvent{
+	eEvent := &eventEntity{
 		Event:     *event,
 		timestamp: time.Now(),
 		id:        uuid.New(),
@@ -33,7 +33,7 @@ func (e *EventRepository) AddEvent(event *models.Event) error {
 	return e.addEvent(eEvent)
 }
 
-func (e *EventRepository) addEvent(event *enhancedEvent) error {
+func (e *EventRepository) addEvent(event *eventEntity) error {
 	t0, t1, err := helper.SplitInt62(event.timestamp.UnixMicro())
 	if err != nil {
 		return err

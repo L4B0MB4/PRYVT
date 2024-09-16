@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type enhancedEvent struct {
+type eventEntity struct {
 	models.Event
 	timestamp time.Time
 	id        uuid.UUID
