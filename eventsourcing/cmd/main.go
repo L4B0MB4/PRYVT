@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"os"
-	"time"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/client"
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler"
@@ -35,35 +35,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	evclient.AddEvents("myaggregate4444", []models.Event{{Version: 1, Name: "asdasd", Data: []byte{1, 2, 3}}})
+	evclient.AddEvents("myaggregate4444", []models.Event{{Version: 2, Name: "asdasd2", Data: []byte{1, 2, 3}}})
+	evs, _ := evclient.GetEventsOrdered("myaggregate4444")
+	fmt.Println(evs)
 
-	/*
-		err = repository.AddEvent(&models.Event{AggregateType: "myaggregate", Name: "myevent", Version: 1, Data: []byte("erstes event")})
-
-		if err != nil {
-			log.Error().Err(err).Msg("Inserting into events table")
-		}
-		err = repository.AddEvent(&models.Event{AggregateType: "myaggregate", Name: "myevent2", Version: 2, Data: []byte("zweites event")})
-
-		if err != nil {
-			log.Error().Err(err).Msg("Inserting into events table")
-		}
-		err = repository.AddEvent(&models.Event{AggregateType: "myotheraggregate", Name: "whatanevent", Version: 1, Data: []byte("whatanevent")})
-
-		if err != nil {
-			log.Error().Err(err).Msg("Inserting into events table")
-		}
-
-		ev, err := repository.GetEventsForAggregate("myaggregate")
-		if err != nil {
-			log.Error().Err(err).Msg("myaggregate")
-		}
-		fmt.Println(ev)
-
-		ev, err = repository.GetEventsForAggregate("myotheraggregate")
-		if err != nil {
-			log.Error().Err(err).Msg("myotheraggregate")
-		}
-		fmt.Println(ev)*/
-	time.Sleep(100000)
+	h.Stop()
 }

@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
 	"github.com/rs/zerolog/log"
@@ -50,9 +52,53 @@ func (client *EventSourcingHttpClient) AddEvents(aggregateId string, events []mo
 		log.Info().Err(err).Msg("Error during the request")
 		return err
 	}
-	if resp.StatusCode != 200 {
-		log.Info().Err(err).Msg("Got non 200 header")
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		log.Info().Err(err).Msg("Got non 2XX header")
 		return fmt.Errorf("UNSUCCESSFUL REQUEST")
 	}
 	return nil
+}
+
+func (client *EventSourcingHttpClient) GetEventsOrdered(aggregateId string) (*EventsIterator, error) {
+
+	getEventsUrl, err := url.JoinPath(client.url, fmt.Sprintf("/%s/events", aggregateId))
+	if err != nil {
+		log.Info().Err(err).Msg("Could not use url")
+		return nil, err
+	}
+
+	resp, err := client.httpClient.Get(getEventsUrl)
+	if err != nil {
+		log.Info().Err(err).Msg("Error during the request")
+		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		log.Info().Err(err).Msg("Got non 2XX header")
+		return nil, fmt.Errorf("UNSUCCESSFUL REQUEST")
+	}
+	var events []models.Event
+	buf, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Info().Err(err).Msg("Error during reading response body")
+		return nil, err
+	}
+	err = json.Unmarshal(buf, &events)
+
+	if err != nil {
+		log.Info().Err(err).Msg("Error during unmarshalling body")
+		return nil, err
+	}
+
+	slices.SortFunc(events, func(i models.Event, j models.Event) int {
+		//ascending
+		delta := i.Version - j.Version
+		if delta > 0 {
+			return 1
+		} else if delta < 0 {
+			return -1
+		}
+		return 0
+	})
+	eventsIterator := NewEventIterator(events)
+	return eventsIterator, nil
 }

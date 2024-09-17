@@ -1,10 +1,12 @@
 package httphandler
 
 import (
+	"context"
 	"net/http"
 
 	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type HttpHandler struct {
@@ -37,4 +39,11 @@ func (h *HttpHandler) RegisterRoutes() {
 
 func (h *HttpHandler) Start() error {
 	return h.httpServer.ListenAndServe()
+}
+
+func (h *HttpHandler) Stop() {
+	err := h.httpServer.Shutdown(context.Background())
+	if err != nil {
+		log.Warn().Err(err).Msg("Error during reading response body")
+	}
 }
