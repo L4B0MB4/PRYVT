@@ -31,5 +31,5 @@ func (e *EventsIterator) Current() *models.Event {
 }
 
 func (e *EventsIterator) Reset() {
-	e.index = 0
+	e.index = -1
 }
