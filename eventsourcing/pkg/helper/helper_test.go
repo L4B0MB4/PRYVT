@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
 )
 
 func TestInt62Split64Bit(t *testing.T) {

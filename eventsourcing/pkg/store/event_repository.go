@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models/customerrors"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/helper"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models/customerrors"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )

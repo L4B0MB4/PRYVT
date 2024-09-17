@@ -1,6 +1,6 @@
-module gihtub.com/L4B0MB4/PRYVT/eventsouring
+module github.com/L4B0MB4/PRYVT/eventsouring
 
-go 1.22.0
+go 1.23.1
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
