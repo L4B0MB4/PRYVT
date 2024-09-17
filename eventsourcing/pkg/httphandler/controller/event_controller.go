@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models/customerrors"
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/models/customerrors"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/store"
 	"github.com/gin-gonic/gin"
 )
 

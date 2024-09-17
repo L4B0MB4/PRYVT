@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler"
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/httphandler"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/httphandler/controller"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/store"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

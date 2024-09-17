@@ -3,7 +3,7 @@ package store
 import (
 	"time"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/models"
 	"github.com/google/uuid"
 )
 

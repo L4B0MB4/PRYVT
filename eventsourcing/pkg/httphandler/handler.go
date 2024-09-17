@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/httphandler/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )

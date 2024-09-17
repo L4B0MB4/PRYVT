@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/models"
 	"github.com/rs/zerolog/log"
 )
 

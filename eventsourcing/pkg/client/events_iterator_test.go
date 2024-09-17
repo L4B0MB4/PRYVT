@@ -3,8 +3,8 @@ package client_test
 import (
 	"testing"
 
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/client"
-	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/client"
+	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/models"
 )
 
 func TestIteratorNext(t *testing.T) {
