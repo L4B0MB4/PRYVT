@@ -1,4 +1,4 @@
-module github.com/L4B0MB4/PRYVT/eventsouring
+module github.com/L4B0MB4/PRYVT/eventsourcing
 
 go 1.23.1
 
