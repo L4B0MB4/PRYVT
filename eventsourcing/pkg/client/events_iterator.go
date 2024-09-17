@@ -1,6 +1,6 @@
 package client
 
-import "gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+import "github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
 
 type EventsIterator struct {
 	events []models.Event

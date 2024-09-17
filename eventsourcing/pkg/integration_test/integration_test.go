@@ -4,11 +4,11 @@ import (
 	"os"
 	"testing"
 
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/client"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/client"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/httphandler/controller"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

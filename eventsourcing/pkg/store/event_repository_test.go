@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
-	"gihtub.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/models"
+	"github.com/L4B0MB4/PRYVT/eventsouring/pkg/store"
 )
 
 func setup() *store.DatabaseConnection {
