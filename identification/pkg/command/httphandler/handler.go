@@ -33,7 +33,8 @@ func NewHttpHandler(c *controller.UserController) *HttpHandler {
 }
 
 func (h *HttpHandler) RegisterRoutes() {
-	h.router.POST("/:userId/changeName", h.userController.ChangeName)
+	h.router.POST("/:userId/changeName", h.userController.ChangeDisplayName)
+	h.router.POST("/00000000-0000-0000-0000-000000000000/create", h.userController.CreateUser)
 }
 
 func (h *HttpHandler) Start() error {

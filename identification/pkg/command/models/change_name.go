@@ -1,5 +1,5 @@
 package models
 
-type ChangeName struct {
-	Name string
+type ChangeDisplayName struct {
+	DisplayName string
 }
