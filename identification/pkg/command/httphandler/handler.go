@@ -4,27 +4,27 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/L4B0MB4/PRYVT/eventsourcing/pkg/httphandler/controller"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/command/httphandler/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
 type HttpHandler struct {
-	httpServer      *http.Server
-	router          *gin.Engine
-	eventController *controller.EventController
+	httpServer     *http.Server
+	router         *gin.Engine
+	userController *controller.UserController
 }
 
-func NewHttpHandler(c *controller.EventController) *HttpHandler {
+func NewHttpHandler(c *controller.UserController) *HttpHandler {
 	r := gin.Default()
 	srv := &http.Server{
-		Addr:    "0.0.0.0" + ":" + "5515",
+		Addr:    "0.0.0.0" + ":" + "5516",
 		Handler: r,
 	}
 	handler := &HttpHandler{
-		router:          r,
-		httpServer:      srv,
-		eventController: c,
+		router:         r,
+		httpServer:     srv,
+		userController: c,
 	}
 
 	handler.RegisterRoutes()
@@ -33,8 +33,8 @@ func NewHttpHandler(c *controller.EventController) *HttpHandler {
 }
 
 func (h *HttpHandler) RegisterRoutes() {
-	h.router.GET("/:aggregateId/events", h.eventController.GetEventsForAggregate)
-	h.router.POST("/:aggregateId/events", h.eventController.AddEventToAggregate)
+	h.router.POST("/:userId/changeName", h.userController.ChangeDisplayName)
+	h.router.POST("/00000000-0000-0000-0000-000000000000/create", h.userController.CreateUser)
 }
 
 func (h *HttpHandler) Start() error {
