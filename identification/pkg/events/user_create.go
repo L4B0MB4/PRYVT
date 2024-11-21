@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
-	m "github.com/L4B0MB4/PRYVT/identification/pkg/command/models"
+	m "github.com/L4B0MB4/PRYVT/identification/pkg/models"
 )
 
 type UserCreatedEvent struct {
