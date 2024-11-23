@@ -7,20 +7,20 @@ import (
 
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
-	m "github.com/L4B0MB4/PRYVT/identification/pkg/command/models"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/events"
+	m "github.com/L4B0MB4/PRYVT/identification/pkg/models"
 	"github.com/google/uuid"
 )
 
 type UserAggregate struct {
-	displayName   string
-	name          string
+	DisplayName   string
+	Name          string
 	passwordHash  string
-	email         string
-	changeDate    time.Time
-	events        []models.ChangeTrackedEvent
+	Email         string
+	ChangeDate    time.Time
+	Events        []models.ChangeTrackedEvent
 	aggregateType string
-	aggregateId   uuid.UUID
+	AggregateId   uuid.UUID
 	client        *client.EventSourcingHttpClient
 }
 
@@ -36,10 +36,10 @@ func NewUserAggregate(id uuid.UUID) (*UserAggregate, error) {
 	}
 	ua := &UserAggregate{
 		client:        c,
-		events:        []models.ChangeTrackedEvent{},
+		Events:        []models.ChangeTrackedEvent{},
 		aggregateType: "user",
-		aggregateId:   id,
-		changeDate:    time.Date(2000, 0, 0, 0, 0, 0, 0, time.UTC),
+		AggregateId:   id,
+		ChangeDate:    time.Date(2000, 0, 0, 0, 0, 0, 0, time.UTC),
 	}
 
 	for {
@@ -57,16 +57,16 @@ func NewUserAggregate(id uuid.UUID) (*UserAggregate, error) {
 }
 
 func (ua *UserAggregate) apply_DisplayNameChangedEvent(e *events.DisplayNameChangedEvent) {
-	ua.displayName = e.DisplayName
-	ua.changeDate = e.ChangeDate
+	ua.DisplayName = e.DisplayName
+	ua.ChangeDate = e.ChangeDate
 
 }
 func (ua *UserAggregate) apply_UserCreatedEvent(e *events.UserCreatedEvent) {
-	ua.name = e.Name
-	ua.displayName = e.Name
-	ua.changeDate = e.CreationDate
+	ua.Name = e.Name
+	ua.DisplayName = e.Name
+	ua.ChangeDate = e.CreationDate
 	ua.passwordHash = e.PasswordHash
-	ua.email = e.Email
+	ua.Email = e.Email
 }
 
 func (ua *UserAggregate) addEvent(ev *models.ChangeTrackedEvent) {
@@ -83,22 +83,22 @@ func (ua *UserAggregate) addEvent(ev *models.ChangeTrackedEvent) {
 	if ev.Version == 0 {
 		ev.IsNew = true
 	}
-	v := len(ua.events) + 1 //for validation we need to start at 1
+	v := len(ua.Events) + 1 //for validation we need to start at 1
 	ev.Version = int64(v)
 	ev.AggregateType = ua.aggregateType
-	ev.AggregateId = ua.aggregateId.String()
-	ua.events = append(ua.events, *ev)
+	ev.AggregateId = ua.AggregateId.String()
+	ua.Events = append(ua.Events, *ev)
 }
 
 func (ua *UserAggregate) saveChanges() error {
-	return ua.client.AddEvents(ua.aggregateId.String(), ua.events)
+	return ua.client.AddEvents(ua.AggregateId.String(), ua.Events)
 }
 func (ua *UserAggregate) ChangeDisplayName(name string) error {
-	if len(ua.events) == 0 {
+	if len(ua.Events) == 0 {
 		return fmt.Errorf("user does not yet exist")
 	}
 
-	if ua.displayName != name && len(name) <= 50 && time.Since(ua.changeDate).Seconds() > 10 {
+	if ua.DisplayName != name && len(name) <= 50 && time.Since(ua.ChangeDate).Seconds() > 10 {
 		ua.addEvent(events.NewNameChangedEvent(name))
 		err := ua.saveChanges()
 		if err != nil {
@@ -111,7 +111,7 @@ func (ua *UserAggregate) ChangeDisplayName(name string) error {
 
 func (ua *UserAggregate) CreateUser(userCreate m.UserCreate) error {
 
-	if len(ua.events) != 0 {
+	if len(ua.Events) != 0 {
 		return fmt.Errorf("user already exists")
 	}
 

@@ -9,18 +9,18 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "output": "debug",
+            "output": "commander",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/cmd/commander/main.go"
         },
         {
-            "name": "Launch Querier",
+            "name": "Launch Queryer",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "output": "debug",
+            "output": "queryer",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/cmd/querier/main.go"
+            "program": "${workspaceFolder}/cmd/queryer/main.go"
         }
     ]
 }
