@@ -20,7 +20,7 @@ type UserAggregate struct {
 	ChangeDate    time.Time
 	Events        []models.ChangeTrackedEvent
 	aggregateType string
-	aggregateId   uuid.UUID
+	AggregateId   uuid.UUID
 	client        *client.EventSourcingHttpClient
 }
 
@@ -38,7 +38,7 @@ func NewUserAggregate(id uuid.UUID) (*UserAggregate, error) {
 		client:        c,
 		Events:        []models.ChangeTrackedEvent{},
 		aggregateType: "user",
-		aggregateId:   id,
+		AggregateId:   id,
 		ChangeDate:    time.Date(2000, 0, 0, 0, 0, 0, 0, time.UTC),
 	}
 
@@ -86,12 +86,12 @@ func (ua *UserAggregate) addEvent(ev *models.ChangeTrackedEvent) {
 	v := len(ua.Events) + 1 //for validation we need to start at 1
 	ev.Version = int64(v)
 	ev.AggregateType = ua.aggregateType
-	ev.AggregateId = ua.aggregateId.String()
+	ev.AggregateId = ua.AggregateId.String()
 	ua.Events = append(ua.Events, *ev)
 }
 
 func (ua *UserAggregate) saveChanges() error {
-	return ua.client.AddEvents(ua.aggregateId.String(), ua.Events)
+	return ua.client.AddEvents(ua.AggregateId.String(), ua.Events)
 }
 func (ua *UserAggregate) ChangeDisplayName(name string) error {
 	if len(ua.Events) == 0 {

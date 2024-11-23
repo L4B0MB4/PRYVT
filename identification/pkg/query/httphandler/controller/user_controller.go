@@ -6,15 +6,17 @@ import (
 
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/models"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type UserController struct {
+	userRepo *repository.UserRepository
 }
 
-func NewUserController() *UserController {
-	return &UserController{}
+func NewUserController(userRepo *repository.UserRepository) *UserController {
+	return &UserController{userRepo: userRepo}
 }
 
 func (ctrl *UserController) GetUser(c *gin.Context) {
@@ -48,4 +50,34 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 	}
 
+}
+
+func (ctrl *UserController) GetUsers(c *gin.Context) {
+
+}
+
+func (ctrl *UserController) GetUserFromDB(c *gin.Context) {
+	userId := c.Param("userId")
+
+	if len(strings.TrimSpace(userId)) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Path param cant be empty or null"})
+		return
+	}
+	userUuid, err := uuid.Parse(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := ctrl.userRepo.GetUserById(userUuid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

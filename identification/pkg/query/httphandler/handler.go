@@ -34,6 +34,7 @@ func NewHttpHandler(c *controller.UserController) *HttpHandler {
 
 func (h *HttpHandler) RegisterRoutes() {
 	h.router.GET("/:userId", h.userController.GetUser)
+	h.router.GET("/", h.userController.GetUsers)
 }
 
 func (h *HttpHandler) Start() error {
