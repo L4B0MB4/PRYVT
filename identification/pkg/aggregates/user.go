@@ -8,7 +8,7 @@ import (
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/events"
-	m "github.com/L4B0MB4/PRYVT/identification/pkg/models"
+	m "github.com/L4B0MB4/PRYVT/identification/pkg/models/command"
 	"github.com/google/uuid"
 )
 

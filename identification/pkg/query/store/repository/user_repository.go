@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/L4B0MB4/PRYVT/identification/pkg/query/models"
+	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 	"github.com/google/uuid"
 )
 

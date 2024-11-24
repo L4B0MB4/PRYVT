@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
-	"github.com/L4B0MB4/PRYVT/identification/pkg/query/models"
+	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

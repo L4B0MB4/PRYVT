@@ -5,7 +5,7 @@ import (
 
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
-	"github.com/L4B0MB4/PRYVT/identification/pkg/query/models"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -28,7 +28,6 @@ func (ep *EventPolling) PollEvents() {
 
 	for {
 		time.Sleep(50 * time.Millisecond)
-		log.Debug().Msg("Polling events")
 		eId, err := ep.eventRepo.GetLastEvent()
 		if err != nil {
 			log.Err(err).Msg("Error while getting last events")
@@ -47,7 +46,7 @@ func (ep *EventPolling) PollEvents() {
 					log.Err(err).Msg("Error while creating user aggregate")
 					break
 				}
-				uI := getUserModelFromAggregate(ua)
+				uI := helper.GetUserModelFromAggregate(ua)
 				err = ep.userRepo.AddOrReplaceUser(uI)
 				if err != nil {
 					log.Err(err).Msg("Error while adding or replacing user")
@@ -62,14 +61,4 @@ func (ep *EventPolling) PollEvents() {
 		}
 	}
 
-}
-
-func getUserModelFromAggregate(userAggregate *aggregates.UserAggregate) *models.UserInfo {
-	return &models.UserInfo{
-		ID:          userAggregate.AggregateId,
-		DisplayName: userAggregate.DisplayName,
-		Name:        userAggregate.Name,
-		Email:       userAggregate.Email,
-		ChangeDate:  userAggregate.ChangeDate,
-	}
 }

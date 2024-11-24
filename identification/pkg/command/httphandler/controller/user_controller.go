@@ -6,7 +6,7 @@ import (
 
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
-	"github.com/L4B0MB4/PRYVT/identification/pkg/models"
+	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/command"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
