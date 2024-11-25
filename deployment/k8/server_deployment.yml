@@ -1,3 +1,34 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/run/desktop/mnt/host/c/temp"
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +36,7 @@ metadata:
   labels:
     app: evtsrc-server
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: evtsrc-server
@@ -14,9 +45,13 @@ spec:
       labels:
         app: evtsrc-server
     spec:
+      volumes:
+        - name: evt-src-db-storage
+          persistentVolumeClaim:
+            claimName: task-pv-claim          
       containers:
         - name: evtsrc-server
-          image: lab0mb4/evtsrc:latest
+          image: lab0mb4/evtsrc:v0.4.4
           imagePullPolicy: Always
           resources:
             limits:
@@ -24,7 +59,9 @@ spec:
               cpu: "0.5"
           ports:
             - containerPort: 5515
-
+          volumeMounts:
+          - mountPath: "/app/db_files"
+            name: evt-src-db-storage
 ---
 apiVersion: v1
 kind: Service
@@ -38,24 +75,3 @@ spec:
   selector:
     app: evtsrc-server
 
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: hello-world-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /api(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: evtsrc-server
-            port:
-              number: 80
