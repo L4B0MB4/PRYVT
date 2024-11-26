@@ -26,7 +26,7 @@ type UserAggregate struct {
 
 func NewUserAggregate(id uuid.UUID) (*UserAggregate, error) {
 
-	c, err := client.NewEventSourcingHttpClient("http://localhost:5515")
+	c, err := client.NewEventSourcingHttpClient(client.RetrieveEventSourcingClientUrl())
 	if err != nil {
 		panic(err)
 	}

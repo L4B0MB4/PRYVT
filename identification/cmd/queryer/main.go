@@ -24,9 +24,9 @@ func main() {
 	}
 	log.Debug().Msg("Db Connection was successful")
 
-	c, err := client.NewEventSourcingHttpClient("http://localhost:5515")
+	c, err := client.NewEventSourcingHttpClient(client.RetrieveEventSourcingClientUrl())
 	if err != nil {
-		log.Error().Err(err).Msg("Unsuccessfull initalization of client")
+		log.Error().Err(err).Msg("Unsuccessful initialization of client")
 		return
 	}
 	eventRepo := repository.NewEventRepository(conn)
