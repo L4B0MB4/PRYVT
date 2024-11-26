@@ -1,4 +1,4 @@
-package models
+package command
 
 type UserCreate struct {
 	Name     string

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"os"
+	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rs/zerolog/log"
@@ -14,7 +15,7 @@ type DatabaseConnection struct {
 	db          *sql.DB
 }
 
-var _DBFILE = "./user_query.db"
+var _DBFILE = "./db_files/user_query.db"
 
 func GetDbFileLocation() string {
 	return _DBFILE
@@ -34,6 +35,15 @@ func (d *DatabaseConnection) Teardown() error {
 }
 
 func (d *DatabaseConnection) SetUp() {
+	dbDir := filepath.Dir(_DBFILE)
+	if _, err := os.Stat(dbDir); os.IsNotExist(err) {
+		err = os.Mkdir(dbDir, os.ModePerm)
+		if err != nil {
+			log.Info().Err(err).Msg("Creating directory for database files")
+			return
+		}
+	}
+
 	db, err := sql.Open("sqlite3", _DBFILE)
 	if err != nil {
 

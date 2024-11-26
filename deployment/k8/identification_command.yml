@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pryvt-identification-command-deployment
+  labels:
+    app: pryvt-identification-command
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pryvt-identification-command
+  template:
+    metadata:
+      labels:
+        app: pryvt-identification-command
+    spec:
+      volumes:
+        - name: pryvt-identification-command-storage
+          persistentVolumeClaim:
+            claimName: task-pv-claim          
+      containers:
+        - name: pryvt-identification-command-container
+          image: lab0mb4/identification_command:development
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "128M"
+              cpu: "0.5"
+          env:
+            - name: EVENT_SOURCING_CLIENT_URL
+              value: "http://evtsrc-server.default.svc.cluster.local"
+          ports:
+            - containerPort: 5516
+          volumeMounts:
+          - mountPath: "/app/db_files"
+            name: pryvt-identification-command-storage
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pryvt-identification-command-svc
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 5516
+  selector:
+    app: pryvt-identification-command

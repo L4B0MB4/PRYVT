@@ -8,7 +8,7 @@ import (
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/events"
-	m "github.com/L4B0MB4/PRYVT/identification/pkg/models"
+	m "github.com/L4B0MB4/PRYVT/identification/pkg/models/command"
 	"github.com/google/uuid"
 )
 
@@ -26,7 +26,7 @@ type UserAggregate struct {
 
 func NewUserAggregate(id uuid.UUID) (*UserAggregate, error) {
 
-	c, err := client.NewEventSourcingHttpClient("http://localhost:5515")
+	c, err := client.NewEventSourcingHttpClient(client.RetrieveEventSourcingClientUrl())
 	if err != nil {
 		panic(err)
 	}
