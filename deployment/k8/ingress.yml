@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-world-ingress
+  name: pryvt-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -11,10 +11,24 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api(/|$)(.*)
+      - path: /api/evtsrc(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: evtsrc-server
+            port:
+              number: 80
+      - path: /api/identification/query(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: pryvt-identification-query-svc
+            port:
+              number: 80
+      - path: /api/identification/command(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: pryvt-identification-command-svc
             port:
               number: 80
