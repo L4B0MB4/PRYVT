@@ -20,13 +20,13 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (repo *UserRepository) GetUserById(userId uuid.UUID) (*models.UserInfo, error) {
 	var user models.UserInfo
-	stmt, err := repo.db.Prepare("SELECT display_name, name, email, change_date FROM users WHERE id = ?")
+	stmt, err := repo.db.Prepare("SELECT display_name, name, email, change_date, password_hash FROM users WHERE id = ?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(userId).Scan(&user.DisplayName, &user.Name, &user.Email, &user.ChangeDate)
+	err = stmt.QueryRow(userId).Scan(&user.DisplayName, &user.Name, &user.Email, &user.ChangeDate, &user.PasswordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -68,20 +68,21 @@ func (repo *UserRepository) GetAllUsers(limit, offset int) ([]models.UserInfo, e
 
 func (repo *UserRepository) AddOrReplaceUser(user *models.UserInfo) error {
 	stmt, err := repo.db.Prepare(`
-		INSERT INTO users (id, display_name, name, email, change_date)
-		VALUES (?, ?, ?, ?, ?)
+		INSERT INTO users (id, display_name, name, email, change_date, password_hash)
+		VALUES (?, ?, ?, ?, ?, ?)
 		ON CONFLICT(id) DO UPDATE SET
 			display_name = excluded.display_name,
 			name = excluded.name,
 			email = excluded.email,
-			change_date = excluded.change_date
+			change_date = excluded.change_date,
+			password_hash = excluded.password_hash
 	`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate)
+	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate, user.PasswordHash)
 	if err != nil {
 		return err
 	}

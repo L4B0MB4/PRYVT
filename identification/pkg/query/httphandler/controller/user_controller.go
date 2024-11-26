@@ -7,6 +7,7 @@ import (
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
 	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/query/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -54,30 +55,14 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 
 func (ctrl *UserController) GetUsers(c *gin.Context) {
 
-}
+	limit := utils.GetLimit(c)
+	offset := utils.GetOffset(c)
 
-func (ctrl *UserController) GetUserFromDB(c *gin.Context) {
-	userId := c.Param("userId")
-
-	if len(strings.TrimSpace(userId)) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Path param cant be empty or null"})
-		return
-	}
-	userUuid, err := uuid.Parse(userId)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	user, err := ctrl.userRepo.GetUserById(userUuid)
+	users, err := ctrl.userRepo.GetAllUsers(limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
+	c.JSON(http.StatusOK, users)
 
-	c.JSON(http.StatusOK, user)
 }

@@ -7,10 +7,11 @@ import (
 
 func GetUserModelFromAggregate(userAggregate *aggregates.UserAggregate) *models.UserInfo {
 	return &models.UserInfo{
-		ID:          userAggregate.AggregateId,
-		DisplayName: userAggregate.DisplayName,
-		Name:        userAggregate.Name,
-		Email:       userAggregate.Email,
-		ChangeDate:  userAggregate.ChangeDate,
+		ID:           userAggregate.AggregateId,
+		DisplayName:  userAggregate.DisplayName,
+		Name:         userAggregate.Name,
+		Email:        userAggregate.Email,
+		ChangeDate:   userAggregate.ChangeDate,
+		PasswordHash: userAggregate.PasswordHash,
 	}
 }

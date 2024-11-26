@@ -52,12 +52,16 @@ func (ep *EventPolling) PollEvents() {
 					log.Err(err).Msg("Error while adding or replacing user")
 					break
 				}
-				err = ep.eventRepo.ReplaceEvent(event.Id)
-				if err != nil {
-					log.Err(err).Msg("Error while replacing event")
-					break
-				}
 			}
+		}
+		if len(events) == 0 {
+			continue
+		}
+		//will this break the db consistency if there are going to be multiple instances of this service?
+		err = ep.eventRepo.ReplaceEvent(events[len(events)-1].Id)
+		if err != nil {
+			log.Err(err).Msg("Error while replacing event")
+			break
 		}
 	}
 

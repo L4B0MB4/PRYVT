@@ -71,7 +71,8 @@ func createUserTable(db *sql.DB) error {
 		display_name TEXT,
 		name TEXT,
 		email TEXT,
-		change_date TEXT
+		change_date TEXT,
+		password_hash TEXT
 	);`
 
 	_, err := db.Exec(query)
