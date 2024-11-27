@@ -1,8 +1,6 @@
 package events
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"time"
 
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
@@ -17,14 +15,12 @@ type UserCreatedEvent struct {
 	CreationDate time.Time
 }
 
-func NewUserCreateEvent(uc m.UserCreate) *models.ChangeTrackedEvent {
-	hasher := sha256.New()
-	hasher.Write([]byte(uc.Password))
-	hexHash := hex.EncodeToString(hasher.Sum(nil))
+func NewUserCreateEvent(uc m.UserCreate, hashedPw string) *models.ChangeTrackedEvent {
+
 	b := UnsafeSerializeAny(UserCreatedEvent{
 		Name:         uc.Name,
 		DisplayName:  uc.Name,
-		PasswordHash: hexHash,
+		PasswordHash: hashedPw,
 		Email:        uc.Email,
 		CreationDate: time.Now(),
 	})

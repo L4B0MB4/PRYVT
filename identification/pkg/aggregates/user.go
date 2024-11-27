@@ -8,6 +8,7 @@ import (
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/events"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
 	m "github.com/L4B0MB4/PRYVT/identification/pkg/models/command"
 	"github.com/google/uuid"
 )
@@ -127,7 +128,8 @@ func (ua *UserAggregate) CreateUser(userCreate m.UserCreate) error {
 		return fmt.Errorf("password not between 8 and 50 characters")
 
 	}
-	ua.addEvent(events.NewUserCreateEvent(userCreate))
+	hashedPw := helper.HashPassword(userCreate.Password)
+	ua.addEvent(events.NewUserCreateEvent(userCreate, hashedPw))
 	err := ua.saveChanges()
 	if err != nil {
 		return fmt.Errorf("ERROR ")

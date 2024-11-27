@@ -1,11 +1,10 @@
-package helper
+package aggregates
 
 import (
-	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
 	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 )
 
-func GetUserModelFromAggregate(userAggregate *aggregates.UserAggregate) *models.UserInfo {
+func GetUserModelFromAggregate(userAggregate *UserAggregate) *models.UserInfo {
 	return &models.UserInfo{
 		ID:           userAggregate.AggregateId,
 		DisplayName:  userAggregate.DisplayName,
