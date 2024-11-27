@@ -2,9 +2,11 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 
 	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type UserRepository struct {
@@ -26,13 +28,21 @@ func (repo *UserRepository) GetUserById(userId uuid.UUID) (*models.UserInfo, err
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(userId).Scan(&user.DisplayName, &user.Name, &user.Email, &user.ChangeDate, &user.PasswordHash)
+	var changeDate string
+	err = stmt.QueryRow(userId.String()).Scan(&user.DisplayName, &user.Name, &user.Email, &changeDate, &user.PasswordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
+	parsedTime, err := time.Parse(time.RFC3339Nano, changeDate)
+	if err != nil {
+		log.Err(err).Msg("Error while parsing time using empty changedate")
+	} else {
+		user.ChangeDate = parsedTime
+	}
+
 	return &user, nil
 }
 
@@ -82,7 +92,7 @@ func (repo *UserRepository) AddOrReplaceUser(user *models.UserInfo) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate, user.PasswordHash)
+	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate.Format(time.RFC3339), user.PasswordHash)
 	if err != nil {
 		return err
 	}

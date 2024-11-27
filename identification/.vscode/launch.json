@@ -21,6 +21,9 @@
             "output": "queryer",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/cmd/queryer/main.go",
+            "env": {
+                "SIGNING_SECRET": "just_an_example"
+            }
         }
     ]
 }

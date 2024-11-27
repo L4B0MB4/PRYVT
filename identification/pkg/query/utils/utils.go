@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func GetLimit(c *gin.Context) int {
@@ -29,4 +31,17 @@ func GetOffset(c *gin.Context) int {
 		}
 	}
 	return offset
+}
+
+func GetUserIdParam(c *gin.Context) (uuid.UUID, error) {
+	userId := c.Param("userId")
+
+	if len(strings.TrimSpace(userId)) == 0 {
+		return uuid.Nil, fmt.Errorf("path param cant be empty or null")
+	}
+	userUuid, err := uuid.Parse(userId)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return userUuid, nil
 }
