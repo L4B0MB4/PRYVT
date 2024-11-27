@@ -5,7 +5,6 @@ import (
 
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
-	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -46,18 +45,23 @@ func (ep *EventPolling) PollEvents() {
 					log.Err(err).Msg("Error while creating user aggregate")
 					break
 				}
-				uI := helper.GetUserModelFromAggregate(ua)
+				uI := aggregates.GetUserModelFromAggregate(ua)
 				err = ep.userRepo.AddOrReplaceUser(uI)
 				if err != nil {
 					log.Err(err).Msg("Error while adding or replacing user")
 					break
 				}
-				err = ep.eventRepo.ReplaceEvent(event.Id)
-				if err != nil {
-					log.Err(err).Msg("Error while replacing event")
-					break
-				}
 			}
+		}
+		if len(events) == 0 {
+			continue
+		}
+		//will this break the db consistency if there are going to be multiple instances of this service?
+		// probably but if we dont a volume (that both instances use as a db file) this should be fine
+		err = ep.eventRepo.ReplaceEvent(events[len(events)-1].Id)
+		if err != nil {
+			log.Err(err).Msg("Error while replacing event")
+			break
 		}
 	}
 

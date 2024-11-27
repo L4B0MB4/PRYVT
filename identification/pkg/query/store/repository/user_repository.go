@@ -2,9 +2,11 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 
 	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type UserRepository struct {
@@ -20,19 +22,27 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (repo *UserRepository) GetUserById(userId uuid.UUID) (*models.UserInfo, error) {
 	var user models.UserInfo
-	stmt, err := repo.db.Prepare("SELECT display_name, name, email, change_date FROM users WHERE id = ?")
+	stmt, err := repo.db.Prepare("SELECT display_name, name, email, change_date, password_hash FROM users WHERE id = ?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(userId).Scan(&user.DisplayName, &user.Name, &user.Email, &user.ChangeDate)
+	var changeDate string
+	err = stmt.QueryRow(userId.String()).Scan(&user.DisplayName, &user.Name, &user.Email, &changeDate, &user.PasswordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
+	parsedTime, err := time.Parse(time.RFC3339Nano, changeDate)
+	if err != nil {
+		log.Err(err).Msg("Error while parsing time using empty changedate")
+	} else {
+		user.ChangeDate = parsedTime
+	}
+
 	return &user, nil
 }
 
@@ -68,20 +78,21 @@ func (repo *UserRepository) GetAllUsers(limit, offset int) ([]models.UserInfo, e
 
 func (repo *UserRepository) AddOrReplaceUser(user *models.UserInfo) error {
 	stmt, err := repo.db.Prepare(`
-		INSERT INTO users (id, display_name, name, email, change_date)
-		VALUES (?, ?, ?, ?, ?)
+		INSERT INTO users (id, display_name, name, email, change_date, password_hash)
+		VALUES (?, ?, ?, ?, ?, ?)
 		ON CONFLICT(id) DO UPDATE SET
 			display_name = excluded.display_name,
 			name = excluded.name,
 			email = excluded.email,
-			change_date = excluded.change_date
+			change_date = excluded.change_date,
+			password_hash = excluded.password_hash
 	`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate)
+	_, err = stmt.Exec(user.ID, user.DisplayName, user.Name, user.Email, user.ChangeDate.Format(time.RFC3339), user.PasswordHash)
 	if err != nil {
 		return err
 	}

@@ -11,7 +11,7 @@
             "mode": "auto",
             "output": "commander",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/cmd/commander/main.go"
+            "program": "${workspaceFolder}/cmd/commander/main.go",
         },
         {
             "name": "Launch Queryer",
@@ -20,7 +20,10 @@
             "mode": "auto",
             "output": "queryer",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/cmd/queryer/main.go"
+            "program": "${workspaceFolder}/cmd/queryer/main.go",
+            "env": {
+                "SIGNING_SECRET": "just_an_example"
+            }
         }
     ]
 }

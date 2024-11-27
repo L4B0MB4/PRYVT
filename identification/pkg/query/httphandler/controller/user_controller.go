@@ -2,32 +2,60 @@ package controller
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/L4B0MB4/PRYVT/identification/pkg/aggregates"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
 	models "github.com/L4B0MB4/PRYVT/identification/pkg/models/query"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/query/authentication"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/query/store/repository"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/query/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type UserController struct {
-	userRepo *repository.UserRepository
+	userRepo     *repository.UserRepository
+	tokenManager *authentication.TokenManager
 }
 
-func NewUserController(userRepo *repository.UserRepository) *UserController {
-	return &UserController{userRepo: userRepo}
+func NewUserController(userRepo *repository.UserRepository, tokenManager *authentication.TokenManager) *UserController {
+	return &UserController{userRepo: userRepo, tokenManager: tokenManager}
+}
+
+func (ctrl *UserController) GetToken(c *gin.Context) {
+	userUuid, err := utils.GetUserIdParam(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	tokenReq := &models.TokenRequest{}
+	err = c.BindJSON(tokenReq)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	user, err := ctrl.userRepo.GetUserById(userUuid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	hashedPw := helper.HashPassword(tokenReq.Password)
+	if user.PasswordHash != hashedPw {
+
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	token, err := ctrl.tokenManager.CreateToken(userUuid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, models.TokenResponse{Token: token})
+
 }
 
 func (ctrl *UserController) GetUser(c *gin.Context) {
 
-	userId := c.Param("userId")
-
-	if len(strings.TrimSpace(userId)) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Path param cant be empty or null"})
-		return
-	}
-	userUuid, err := uuid.Parse(userId)
+	userUuid, err := utils.GetUserIdParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -54,30 +82,14 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 
 func (ctrl *UserController) GetUsers(c *gin.Context) {
 
-}
+	limit := utils.GetLimit(c)
+	offset := utils.GetOffset(c)
 
-func (ctrl *UserController) GetUserFromDB(c *gin.Context) {
-	userId := c.Param("userId")
-
-	if len(strings.TrimSpace(userId)) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Path param cant be empty or null"})
-		return
-	}
-	userUuid, err := uuid.Parse(userId)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	user, err := ctrl.userRepo.GetUserById(userUuid)
+	users, err := ctrl.userRepo.GetAllUsers(limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
+	c.JSON(http.StatusOK, users)
 
-	c.JSON(http.StatusOK, user)
 }

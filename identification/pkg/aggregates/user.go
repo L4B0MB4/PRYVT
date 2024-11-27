@@ -8,6 +8,7 @@ import (
 	"github.com/L4B0MB4/EVTSRC/pkg/client"
 	"github.com/L4B0MB4/EVTSRC/pkg/models"
 	"github.com/L4B0MB4/PRYVT/identification/pkg/events"
+	"github.com/L4B0MB4/PRYVT/identification/pkg/helper"
 	m "github.com/L4B0MB4/PRYVT/identification/pkg/models/command"
 	"github.com/google/uuid"
 )
@@ -15,7 +16,7 @@ import (
 type UserAggregate struct {
 	DisplayName   string
 	Name          string
-	passwordHash  string
+	PasswordHash  string
 	Email         string
 	ChangeDate    time.Time
 	Events        []models.ChangeTrackedEvent
@@ -65,7 +66,7 @@ func (ua *UserAggregate) apply_UserCreatedEvent(e *events.UserCreatedEvent) {
 	ua.Name = e.Name
 	ua.DisplayName = e.Name
 	ua.ChangeDate = e.CreationDate
-	ua.passwordHash = e.PasswordHash
+	ua.PasswordHash = e.PasswordHash
 	ua.Email = e.Email
 }
 
@@ -127,7 +128,8 @@ func (ua *UserAggregate) CreateUser(userCreate m.UserCreate) error {
 		return fmt.Errorf("password not between 8 and 50 characters")
 
 	}
-	ua.addEvent(events.NewUserCreateEvent(userCreate))
+	hashedPw := helper.HashPassword(userCreate.Password)
+	ua.addEvent(events.NewUserCreateEvent(userCreate, hashedPw))
 	err := ua.saveChanges()
 	if err != nil {
 		return fmt.Errorf("ERROR ")
