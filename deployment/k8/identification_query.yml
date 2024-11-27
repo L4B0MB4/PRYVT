@@ -29,6 +29,8 @@ spec:
           env:
             - name: EVENT_SOURCING_CLIENT_URL
               value: "http://evtsrc-server.default.svc.cluster.local"
+            - name: SIGNING_SECRET
+              value: "example_secret_key"
           ports:
             - containerPort: 5517
           volumeMounts:
