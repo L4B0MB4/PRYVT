@@ -58,6 +58,7 @@ func (ep *EventPolling) PollEvents() {
 			continue
 		}
 		//will this break the db consistency if there are going to be multiple instances of this service?
+		// probably but if we dont a volume (that both instances use as a db file) this should be fine
 		err = ep.eventRepo.ReplaceEvent(events[len(events)-1].Id)
 		if err != nil {
 			log.Err(err).Msg("Error while replacing event")
